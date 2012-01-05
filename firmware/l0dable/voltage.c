@@ -12,16 +12,18 @@
 /**************************************************************************/
 
 void ram(void) {
-    int v,mv,c;
+    int v,mv,c,p;
     do{
         lcdClear();
         lcdPrintln("Battery status:");
-        c=gpioGetValue(RB_PWR_CHRG);
+        c=GetChrgStat();
         mv=GetVoltage();
         v=mv/1000;
+//        p=int((650-(4200-mv))/0.65); // if 0% == 3550 mV (probably not…)
+        p=(750-(4200-mv))/0.75; // seems to be 3450 mV
 
         lcdNl();
-        if(!c){
+        if(c){
             lcdPrintln("CHARGING");
         }else if (mv<3550){
             lcdPrintln("  Charge NOW!");
@@ -40,10 +42,14 @@ void ram(void) {
         lcdPrint(IntToStr(v,2,0));
         lcdPrint(".");
         lcdPrint(IntToStr(mv%1000,3,F_ZEROS));
-        lcdPrintln("V");
+        lcdPrint("V   ");
+	lcdPrint(IntToStr(p/10,3,0));
+        lcdPrint(".");
+        lcdPrint(IntToStr(p%10,1,F_ZEROS));
+        lcdPrint("%");
 
         lcdNl();
-        if(c){
+        if(!c){
             lcdPrintln("(not charging)");
         };
         lcdRefresh();
