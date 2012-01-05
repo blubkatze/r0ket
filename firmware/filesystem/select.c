@@ -113,6 +113,7 @@ int selectFile(char *filename, const char *extension)
             case BTN_ENTER:
             case BTN_RIGHT:
                 strcpy(filename, files[selected]);
+		getInputWaitRelease(); // catch this event so the app does not get it
                 return 0;
         }
     }
