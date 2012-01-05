@@ -20,7 +20,7 @@ void ram(void) {
         mv=GetVoltage();
         v=mv/1000;
 //        p=int((650-(4200-mv))/0.65); // if 0% == 3550 mV (probably not…)
-        p=(700-(4200-mv))/0.7; // seems to be 3500 mV [firmware/basic/voltage.c]
+        p=(3500-mv)/-0.7; // seems to be 3500 mV [firmware/basic/voltage.c]
 
         lcdNl();
         if(c){
