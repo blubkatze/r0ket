@@ -62,6 +62,7 @@ void ram() {
 
 	int raw_key, key;
 	int i, j;
+	int score, lastlvl, linec;
 
 	new_stone();
 	new_stone();
@@ -70,8 +71,7 @@ void ram() {
 	for(i = 0; i < GRID_HEIGHT; i++)
 		for(j = 0; j < GRID_WIDTH; j++)
 			grid[i][j] = 0;
-
-
+	
 	// prepare screen
 	lcdClear();
 	for(i = 0; i < 96; i++) {
@@ -84,6 +84,18 @@ void ram() {
 		lcdSetPixel(93, i, 1);
 	}
 
+	score = 0;
+	lastlvl=0;
+	linec = 0;
+
+	lcdSetCrsr(37,25);
+	lcdPrint("level: 0");
+
+	lcdSetCrsr(37,40);
+	lcdPrint("score:");
+	lcdSetCrsr(37,50);
+	lcdPrintInt(0);
+	
 	for(;;) {
 
 		// handle input
@@ -138,15 +150,46 @@ void ram() {
 					if(x == GRID_WIDTH) {
 
 						lines++;
+						linec++;	// temporary line counter
 						ticks_per_drop = STARTING_SPEED - lines / 10;
 						if(ticks_per_drop < 1) ticks_per_drop = 1;
 
 						for(i = y; i > 0; i--)
 							for(x = 0; x < GRID_WIDTH; x++)
 								grid[i][x] = grid[i - 1][x];
+
+						switch(linec){
+							case 1:
+								score += 40*(lines/10+1);
+								break;
+							case 2:
+								score += 100*(lines/10+1);
+								break;
+							case 3:
+								score += 300*(lines/10+1);
+								break;
+							case 4:
+								score += 1200*(lines/10+1);
+								break;
+						} 
 					}
 				}
 
+				if (lines/10>lastlvl){
+					lcdSetCrsr(37,25);
+					lcdPrint("level: ");
+					lcdPrintInt(lines/10);
+				}
+				if (linec > 0){
+					lcdSetCrsr(37,40);
+					lcdPrint("score:");
+					lcdSetCrsr(37,50);
+					lcdPrintInt(score);
+				}
+				
+				lastlvl=lines/10;
+				linec = 0;
+				
 				// get a new stone
 				new_stone();
 			}
