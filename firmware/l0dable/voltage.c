@@ -16,11 +16,11 @@ void ram(void) {
     do{
         lcdClear();
         lcdPrintln("Battery status:");
-        c=GetChrgStat();
+//        c=GetChrgStat();
+	c=!gpioGetValue(RB_PWR_CHRG);
         mv=GetVoltage();
         v=mv/1000;
-//        p=int((650-(4200-mv))/0.65); // if 0% == 3550 mV (probably not…)
-        p=(3500-mv)/-0.7; // seems to be 3500 mV [firmware/basic/voltage.c]
+        p=(3500-mv)/-7*10; // seems to be 3500 mV [firmware/basic/voltage.c]
 
         lcdNl();
         if(c){
@@ -38,11 +38,12 @@ void ram(void) {
         };
 
         lcdNl();
-        lcdPrint(" ");
+        lcdPrint("    ");
         lcdPrint(IntToStr(v,2,0));
         lcdPrint(".");
         lcdPrint(IntToStr(mv%1000,3,F_ZEROS));
-        lcdPrint("V   ");
+        lcdPrintln("V");
+        lcdPrint("    ");
 	lcdPrint(IntToStr(p/10,3,0));
         lcdPrint(".");
         lcdPrint(IntToStr(p%10,1,F_ZEROS));
